@@ -38,15 +38,32 @@ const book=JSON.parse(document.getElementById('book-data').textContent),$=id=>do
 const titles=book.titles||["封面", "俄语字母表", "扉页", "出版信息", "目录（一）", "目录（二）", "目录与符号说明", "第 1 课 · 语音", "第 1 课 · 练习", "第 2 课 · 语音", "问候与对话", "名词的性", "第 2 课 · 这是谁／这是什么", "第 2 课 · 看图问答（一）", "第 2 课 · 看图问答（二）", "第 3 课 · 语音练习"];
 let current=0,selected='поехали',activeButton=null,playToken=0;
 const player=new Audio();player.preload='auto';player.preservesPitch=true;
+// One mute setting covers every page and playback entry point in this HTML.
+const muteStorageKey='russian-reader-muted:'+location.pathname;
+let audioMuted=false;
+try{audioMuted=localStorage.getItem(muteStorageKey)==='true';}catch{}
+function applyAudioState(){
+ player.muted=audioMuted;
+ player.defaultMuted=audioMuted;
+ player.volume=audioMuted?0:1;
+}
 function updateMuteButton(){
  const button=$('mute-audio');if(!button)return;
- button.textContent=player.muted?'🔊 取消静音':'🔇 静音';
- button.setAttribute('aria-pressed',String(player.muted));
- button.setAttribute('aria-label',player.muted?'取消静音，恢复俄语男声':'静音，继续朗读和高亮');
- button.title=player.muted?'声音已关闭，点击恢复声音':'关闭声音，朗读进度和单词高亮继续';
+ button.textContent=audioMuted?'🔊 取消静音':'🔇 整本静音';
+ button.setAttribute('aria-pressed',String(audioMuted));
+ button.setAttribute('aria-label',audioMuted?'取消整份 HTML 静音，恢复声音':'静音整份 HTML 的所有点读和朗读');
+ button.title=audioMuted?'整份 HTML 已静音，翻页后仍保持；点击恢复声音':'关闭整份 HTML 的声音，包括点读、重播和连续朗读；进度和高亮继续';
 }
-if($('mute-audio'))$('mute-audio').onclick=()=>{player.muted=!player.muted;updateMuteButton()};
-updateMuteButton();
+if($('mute-audio'))$('mute-audio').onclick=()=>{
+ audioMuted=!audioMuted;
+ applyAudioState();updateMuteButton();
+ try{localStorage.setItem(muteStorageKey,String(audioMuted));}catch{}
+ $('status').textContent=audioMuted?'整份 HTML 已静音，翻页、点读和重播均不发声。':'声音已恢复。';
+};
+player.addEventListener('play',applyAudioState);
+player.addEventListener('loadedmetadata',applyAudioState);
+applyAudioState();updateMuteButton();
+
 let copyingTranslation=false,copyFeedbackTimer=null;
 function fallbackCopy(text){
  const focused=document.activeElement,selection=window.getSelection();
@@ -147,7 +164,7 @@ async function speak(word,button,sequence=false){
  $('status').textContent=sequence?'正在朗读本页俄语…':'正在播放…';
  try{
   const src=book.audio[word];if(!src)throw Error('missing');player.src=src;player.playbackRate=Number($('rate').value);
-  await player.play();if(token!==playToken)return;
+  applyAudioState();await player.play();if(token!==playToken)return;
  }catch(e){
   if(token!==playToken||(sequence&&reading.state==='paused'))return;
   stopPageReading(false);$('status').textContent='未能播放，请再次点击朗读按钮。';
@@ -181,7 +198,7 @@ async function pauseOrResumeReading(){
  reading.state='playing';updateReadingControls();$('status').textContent='正在朗读本页俄语…';
  if(player.ended){reading.index++;playReadingWord();return;}
  const token=playToken;
- try{await player.play();if(token===playToken&&reading.state==='playing')followReadingWord();}
+ try{applyAudioState();await player.play();if(token===playToken&&reading.state==='playing')followReadingWord();}
  catch(e){if(token!==playToken||reading.state==='paused')return;stopPageReading(false);$('status').textContent='未能继续播放，请重新朗读。';}
 }
 player.addEventListener('ended',()=>{
@@ -193,7 +210,7 @@ player.addEventListener('ended',()=>{
 });
 player.addEventListener('error',()=>{stopPageReading(false);$('status').textContent='语音播放失败，请使用 Edge 或 Chrome 打开。'});
 function wordbank(){const q=$('search').value.toLocaleLowerCase('ru');const words=[...new Set(book.pages[current].words.map(w=>w.s))];$('word-count').textContent=words.length+' 词';$('wordlist').replaceChildren();for(const word of words.filter(x=>x.includes(q))){const pair=document.createElement('div');pair.className='bank-pair';const b=document.createElement('button');b.textContent=word;b.type='button';b.dataset.speech=word;b.onclick=()=>speak(word,b);const en=document.createElement('span');en.className='english';en.lang='en';en.textContent=gloss(word);pair.append(b,en);$('wordlist').append(pair)}}
-function showPage(n){selectedAnchor=null;markSelectedWord();stopPageReading(false);current=Math.max(0,Math.min(book.pages.length-1,n));player.pause();playToken++;clearActive();$('status').textContent='点击页面上的俄语单词。';const page=book.pages[current];$('sheet').replaceChildren();const im=document.createElement('img');im.src=page.image;im.alt='PDF 第 '+page.page+' 页：'+titles[current];im.width=page.width;im.height=page.height;$('sheet').append(im);for(const [wordIndex,w] of page.words.entries()){const b=document.createElement('button');b.className='hotspot';b.dataset.wordIndex=wordIndex;b.dataset.speech=w.s;b.type='button';b.lang='ru';b.title=w.s;b.setAttribute('aria-label','朗读：'+w.s);b.style.left=(w.x/page.width*100)+'%';b.style.top=(w.y/page.height*100)+'%';b.style.width=(w.w/page.width*100)+'%';b.style.height=(w.h/page.height*100)+'%';b.onclick=()=>speak(w.s,b);$('sheet').append(b)}$('page-title').textContent=page.page+' / '+book.pages[book.pages.length-1].page;$('page-desc').textContent=titles[current];$('prev').disabled=current===0;$('next').disabled=current===book.pages.length-1;for(const b of $('pages').children)b.setAttribute('aria-current',String(Number(b.dataset.index)===current));$('search').value='';wordbank();renderBilingual(page);updateReadingControls();revealPageButton();try{localStorage.setItem('russian-reader-pages1-16',current)}catch{} }
+function showPage(n){selectedAnchor=null;markSelectedWord();stopPageReading(false);current=Math.max(0,Math.min(book.pages.length-1,n));player.pause();playToken++;clearActive();$('status').textContent='点击页面上的俄语单词。';const page=book.pages[current];applyAudioState();updateMuteButton();$('sheet').replaceChildren();const im=document.createElement('img');im.src=page.image;im.alt='PDF 第 '+page.page+' 页：'+titles[current];im.width=page.width;im.height=page.height;$('sheet').append(im);for(const [wordIndex,w] of page.words.entries()){const b=document.createElement('button');b.className='hotspot';b.dataset.wordIndex=wordIndex;b.dataset.speech=w.s;b.type='button';b.lang='ru';b.title=w.s;b.setAttribute('aria-label','朗读：'+w.s);b.style.left=(w.x/page.width*100)+'%';b.style.top=(w.y/page.height*100)+'%';b.style.width=(w.w/page.width*100)+'%';b.style.height=(w.h/page.height*100)+'%';b.onclick=()=>speak(w.s,b);$('sheet').append(b)}$('page-title').textContent=page.page+' / '+book.pages[book.pages.length-1].page;$('page-desc').textContent=titles[current];$('prev').disabled=current===0;$('next').disabled=current===book.pages.length-1;for(const b of $('pages').children)b.setAttribute('aria-current',String(Number(b.dataset.index)===current));$('search').value='';wordbank();renderBilingual(page);updateReadingControls();revealPageButton();try{localStorage.setItem('russian-reader-pages1-16',current)}catch{} }
 for(let i=0;i<book.pages.length;i++){const b=document.createElement('button');b.textContent=book.pages[i].page;b.title=titles[i];b.dataset.index=i;b.onclick=()=>showPage(i);$('pages').append(b)}
 $('prev').onclick=()=>showPage(current-1);$('next').onclick=()=>showPage(current+1);$('replay').onclick=()=>speak(selected);$('search').oninput=wordbank;$('rate').oninput=()=>{$('rate-value').textContent=Number($('rate').value).toFixed(1)+'×';player.playbackRate=Number($('rate').value)};$('hints').onchange=()=>$('sheet').classList.toggle('show-hotspots',$('hints').checked);$('zoom').onchange=()=>{$('sheet').style.width=$('zoom').value+'%'};
 document.addEventListener('keydown',e=>{if(/INPUT|SELECT|TEXTAREA|BUTTON/.test(e.target.tagName))return;if(e.key==='ArrowRight')showPage(current+1);if(e.key==='ArrowLeft')showPage(current-1);if(e.key==='Escape'){stopPageReading(false);$('status').textContent='已停止播放。'}});
