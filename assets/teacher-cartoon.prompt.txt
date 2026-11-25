@@ -1,0 +1,5 @@
+Tool: built-in image_gen.
+Reference image: existing teacher portrait from course.html, extracted locally as .local/teacher-reference.jpg.
+
+Final prompt:
+Use case: style-transfer, identity-preserve. Edit target: the provided portrait photo of the Russian teacher Анастасия Янукович. Create a polished friendly cartoon avatar for a minimalist Apple-inspired private language classroom login screen. Preserve her recognizable facial proportions, brown eyes, long chestnut brown hair parted near the center, natural lips, and beige knit sweater. Refined 2D editorial cartoon with soft rounded forms, clean restrained outlines, gentle shaded volume, tasteful natural colors, approachable subtle smile. Square composition, centered head and shoulders, fully visible hair silhouette with generous padding around the head for circular avatar crops. Plain very light cool gray background #f5f5f7. No words, no lettering, no Apple logo, no icons, no other people, no decorations, no photo filters or original room background. Keep recognizable identity, avoid exaggerated anime eyes. Output a single high quality avatar image.

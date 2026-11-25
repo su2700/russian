@@ -1,0 +1,10 @@
+{
+  "steps": [{
+    "name": "gcr.io/cloud-builders/docker",
+    "args": ["build", "-t", "${_IMAGE}", "."]
+  }],
+  "images": ["${_IMAGE}"],
+  "serviceAccount": "projects/$PROJECT_ID/serviceAccounts/reader-builder@$PROJECT_ID.iam.gserviceaccount.com",
+  "options": { "logging": "CLOUD_LOGGING_ONLY", "machineType": "E2_STANDARD_2" },
+  "timeout": "600s"
+}

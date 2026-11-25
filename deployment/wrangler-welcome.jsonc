@@ -1,0 +1,10 @@
+{
+ "name": "russian-classroom-welcome",
+ "main": "welcome-worker.mjs",
+ "account_id": "237ebf1f42cc6b5d1d455f67e192795d",
+ "compatibility_date": "2026-11-24",
+ "workers_dev": true,
+ "preview_urls": false,
+ "routes": [{"pattern":"login.anastasiay.ipv64.net","custom_domain":true}],
+ "rules": [{"type":"Text","globs":["**/*.html","**/*.css","**/*.txt"],"fallthrough":true}]
+}

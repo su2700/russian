@@ -1,0 +1,7 @@
+{
+  "hosting": {
+    "public": "deployment/public",
+    "ignore": ["**/.*", "**/node_modules/**"],
+    "rewrites": [{ "source": "**", "run": { "serviceId": "russian-reader", "region": "europe-west1", "pinTag": true } }]
+  }
+}

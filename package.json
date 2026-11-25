@@ -1,0 +1,16 @@
+{
+  "name": "russian-private-reader",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node deployment/build.mjs",
+    "start": "node deployment/server.mjs",
+    "test": "node --test deployment/server.test.mjs deployment/cloudflare-worker.test.mjs deployment/theme.test.mjs"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "jose": "^6.2.18"
+  }
+}

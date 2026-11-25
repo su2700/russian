@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f5f7">
+<script src="/theme.js"></script>
+<title>私人俄语课堂</title>
+<style>
+:root{color-scheme:light;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI","Microsoft YaHei",sans-serif;color:#1d1d1f;background:#f5f5f7;font-synthesis:none}*{box-sizing:border-box}body{margin:0;min-height:100svh;display:grid;place-items:center;padding:48px 24px;-webkit-font-smoothing:antialiased}main{width:min(100%,960px);background:#fff;border:1px solid #00000006;border-radius:32px;box-shadow:0 12px 60px #1d1d1f06;padding:44px 56px 40px}.teacher{margin:0 auto 34px;text-align:center}.portrait{display:block;width:280px;height:280px;margin:0 auto 20px;object-fit:cover;border-radius:50%;border:6px solid #fff;box-shadow:0 0 0 1px #e8e8ed,0 8px 28px #1d1d1f0b}.teacher figcaption{font-size:22px;line-height:1.4;font-weight:600;letter-spacing:-.4px}.languages{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0}.language{padding:0 32px;display:flex;flex-direction:column;text-align:center}.language:first-child{padding-left:0;border-right:1px solid #e8e8ed}.language:last-child{padding-right:0}.language-label{color:#86868b;font-size:12px;line-height:1.5;letter-spacing:.04em;margin:0 0 18px}h1,h2{font-size:32px;line-height:1.25;letter-spacing:-1px;font-weight:650;margin:0 0 16px}.language[lang=ru] h2{font-size:29px;letter-spacing:-.8px}.intro{font-size:14px;line-height:1.8;color:#6e6e73;max-width:340px;margin:0 auto 26px}.login-button{display:flex;justify-content:center;align-items:center;gap:12px;min-height:50px;padding:13px 20px;border-radius:14px;background:#007aff;color:#fff;text-decoration:none;font-size:15px;font-weight:500;margin-top:auto;transition:background .16s,transform .16s}.login-button:hover{background:#006de5}.login-button:active{transform:scale(.985)}.login-button:focus-visible{outline:3px solid #007aff;outline-offset:5px}.login-button svg{width:18px;height:18px;flex-shrink:0}.privacy{font-size:11px;line-height:1.7;color:#86868b;margin:14px 0 0}.closing{margin:32px 0 0;padding-top:24px;border-top:1px solid #eeeef2;display:grid;grid-template-columns:1fr 1fr;gap:32px;text-align:center;color:#a1a1a6;font-size:11px;line-height:1.7}.closing p{margin:0}@media(max-width:680px){body{padding:24px 16px}main{padding:32px 24px 26px;border-radius:26px}.portrait{width:208px;height:208px;margin-bottom:18px}.teacher{margin-bottom:28px}.teacher figcaption{font-size:20px}.languages{grid-template-columns:1fr;gap:30px}.language,.language:first-child,.language:last-child{padding:0;border:0}.language:last-child{padding-top:28px;border-top:1px solid #e8e8ed}.language-label{margin-bottom:12px}h1,h2{font-size:29px}.language[lang=ru] h2{font-size:27px}.intro{margin-bottom:20px;max-width:320px}.closing{display:none}.login-button{min-height:50px}.privacy{font-size:11px}}@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<link rel="stylesheet" href="/theme.css">
+</head>
+<body>
+<main>
+ <figure class="teacher">
+  <img class="portrait" src="/teacher.png" width="280" height="280" alt="教师漫画头像" fetchpriority="high">
+  <figcaption lang="ru">Анастасия Янукович</figcaption>
+ </figure>
+ <div class="languages">
+  <section class="language" lang="zh-CN" aria-labelledby="welcome-zh">
+   <p class="language-label">中文</p><label class="theme-control"><span>外观</span><select data-theme-picker aria-label="外观"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label>
+   <h1 id="welcome-zh">欢迎来到<br>私人俄语课堂</h1>
+   <p class="intro">听见新的词语，说出新的问候。<br>和老师一起，按自己的节奏学习。</p>
+   <a class="login-button" href="https://anastasiay.ipv64.net/">使用邮箱登录<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+   <p class="privacy">仅限已获授权的邮箱。<br>点击后进入安全验证页面。</p>
+  </section>
+  <section class="language" lang="ru" aria-labelledby="welcome-ru">
+   <p class="language-label">Русский</p><label class="theme-control"><span>Оформление</span><select data-theme-picker aria-label="Оформление"><option value="system">Как в системе</option><option value="light">Светлое</option><option value="dark">Тёмное</option></select></label>
+   <h2 id="welcome-ru">Добро пожаловать<br>на уроки русского</h2>
+   <p class="intro">Новые слова. Новые открытия.<br>Учитесь с преподавателем в своём ритме.</p>
+   <a class="login-button" href="https://anastasiay.ipv64.net/">Войти по почте<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"/></svg></a>
+   <p class="privacy">Только для разрешённых адресов.<br>Далее — безопасная проверка входа.</p>
+  </section>
+ </div>
+ <footer class="closing"><p lang="zh-CN">每天一点，让俄语更亲近。</p><p lang="ru">С каждым днём русский становится ближе.</p></footer>
+</main>
+</body>
+</html>
