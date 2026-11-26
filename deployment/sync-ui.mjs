@@ -6,6 +6,7 @@ const files = ['course.html', '俄语入门_第1-36页_俄英对照_男声点读
 const css = await readFile(new URL('./apple-ui.css', import.meta.url), 'utf8');
 const themeCss = await readFile(new URL('./theme.css', import.meta.url), 'utf8');
 const themeScript = await readFile(new URL('./theme-script.txt', import.meta.url), 'utf8');
+const pronunciationScript = await readFile(new URL('./pronunciation-script.txt', import.meta.url), 'utf8');
 const themeControl = '<label class="theme-control"><span>外观</span><select data-theme-picker aria-label="外观"><option value="system">跟随系统</option><option value="light">浅色</option><option value="dark">深色</option></select></label>';
 const avatar = (await readFile(new URL('../assets/teacher-cartoon.png', import.meta.url))).toString('base64');
 const script = `<script id="classroom-ui-script">(() => {
@@ -82,6 +83,12 @@ for (const [fileIndex, name] of files.entries()) {
   if (next) new MutationObserver(update).observe(next, {attributes:true,attributeFilter:['disabled']});
   update();
  })();</script>`;
+ if (fileIndex > 0) {
+  html = html.replace(/<script id="reader-pronunciation">[\s\S]*?<\/script>\n?/g, '');
+  html = html.replace(/<script>(?=\s*'use strict';\s*const book=)/, opening =>
+   '<script id="reader-pronunciation">' + pronunciationScript + '</script>\n' + opening);
+  if (!html.includes('id="reader-pronunciation"')) throw new Error('Missing reader script: ' + name);
+ }
  html = html.replace('</body>', script + nextControl + '</body>');
  const after = html.match(/<script[^>]+id=["']book-data["'][^>]*>([\s\S]*?)<\/script>/)?.[1];
  if (hash(after) !== before) throw new Error('Course data changed: ' + name);

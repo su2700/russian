@@ -124,6 +124,18 @@ button:not(.hotspot){transition:background .15s,box-shadow .15s}button:not(:disa
 header{align-items:center;gap:36px}header>div:first-child{flex:1;min-width:0}.badge{display:inline-block;margin-top:14px}.header-teacher{display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px;width:208px;flex-shrink:0}.header-teacher .teacher-avatar{display:block;width:160px;height:160px;border:5px solid white;border-radius:50%;box-shadow:0 0 0 1px #e5e5ea,0 6px 22px #1d1d1f09}.header-teacher .teacher-label{font-size:14px}.header-teacher .teacher-name{display:block;font-size:13px;color:var(--ink);margin-top:4px}.header-teacher .teacher-label>span:last-child{display:block;color:var(--secondary);font-size:11px;margin-top:4px}@media(max-width:820px){header{flex-direction:column;align-items:flex-start;gap:24px}.header-teacher{width:100%;flex-direction:row;text-align:left;gap:20px}.header-teacher .teacher-avatar{width:128px;height:128px}.badge{display:none}}@media print{.header-teacher{display:none}}
 
 .comparison-wrap{overflow-x:auto;margin:0 0 24px;border:1px solid var(--theme-line,#e5e5ea);border-radius:14px}.comparison-table{border-collapse:collapse;width:100%;font-size:13px;line-height:1.7;color:var(--theme-ink,#1d1d1f)}.comparison-table th,.comparison-table td{text-align:left;vertical-align:top;padding:12px 16px;border-bottom:1px solid var(--theme-line,#e5e5ea);min-width:140px}.comparison-table th{font-weight:600;background:var(--theme-raised,#fafafa)}.comparison-table tbody tr:last-child td{border-bottom:0}.comparison-table td:first-child{font-weight:500}@media(max-width:600px){.comparison-table{font-size:12px}.comparison-table th,.comparison-table td{padding:10px 12px;min-width:120px}}
+
+.word-pair .p11-note {
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+.word-pair .p11-note summary {
+  cursor: pointer;
+}
+.word-pair .p11-note p {
+  margin: 0.4rem 0;
+}
 </style><style id="theme-style">:root{--theme-bg:#f5f5f7;--theme-surface:#fff;--theme-raised:#fafafa;--theme-soft:#ededf2;--theme-ink:#1d1d1f;--theme-muted:#6e6e73;--theme-line:#e5e5ea;--theme-accent:#0066cc}
 :root[data-theme=dark]{color-scheme:dark;--theme-bg:#101014;--theme-surface:#1c1c20;--theme-raised:#24242a;--theme-soft:#2c2c34;--theme-ink:#f5f5f7;--theme-muted:#aaaab4;--theme-line:#38383f;--theme-accent:#69b0ff;--ink:#f5f5f7;--teal:#69b0ff;--paper:#101014;--secondary:#aaaab4}
 html,body{background:var(--theme-bg);color:var(--theme-ink)}
@@ -368,7 +380,7 @@ player.addEventListener('ended',()=>{
  $('status').textContent='点击单词可以再次播放。';clearActive();
 });
 player.addEventListener('error',()=>{stopPageReading(false);$('status').textContent='语音播放失败，请使用 Edge 或 Chrome 打开。'});
-function wordbank(){const q=$('search').value.toLocaleLowerCase('ru');const words=[...new Set(book.pages[current].words.map(w=>w.s))];$('word-count').textContent=words.length+' 词';$('wordlist').replaceChildren();for(const word of words.filter(x=>x.includes(q))){const pair=document.createElement('div');pair.className='bank-pair';const b=document.createElement('button');b.textContent=word;b.type='button';b.dataset.speech=word;b.onclick=()=>copyAndSelectWord(word,b);const en=document.createElement('span');en.className='english';en.lang='en';en.textContent=gloss(word);pair.append(b,en);$('wordlist').append(pair)}}
+function wordbank(){const q=$('search').value.toLocaleLowerCase('ru');const words=[...new Set(book.pages[current].words.map(w=>w.s))];$('word-count').textContent=words.length+' 词';$('wordlist').replaceChildren();for(const word of words.filter(x=>x.includes(q))){const pair=document.createElement('div');pair.className='bank-pair';const b=document.createElement('button');b.textContent=word;b.type='button';b.dataset.speech=word;b.onclick=()=>copyAndSelectWord(word,b);pair.append(b);$('wordlist').append(pair)}}
 function showPage(n){
  selectedAnchor=null;markSelectedWord();stopPageReading(false);
  current=Math.max(0,Math.min(book.pages.length-1,n));player.pause();playToken++;clearActive();applyAudioState();updateMuteButton();
@@ -395,7 +407,7 @@ function displayRussian(w){
 function renderBilingual(page){
  const target=$('bilingual-view');target.replaceChildren();target.className='course-view';
  const heading=document.createElement('h2');heading.textContent=titles[current];
- const help=document.createElement('p');help.className='bilingual-help';help.textContent='全部内容在这一页。左键听音并复制，右键仅复制；展开中文词义可看说明。';
+ const help=document.createElement('p');help.className='bilingual-help';help.textContent='点击俄语词，英文释义显示在左侧「学习工具」。左键听音并复制，右键仅复制；展开中文词义可看说明。';
  target.append(heading,help);
  for(const [groupIndex,group] of page.groups.entries()){
   const section=document.createElement('section');section.className='course-section';section.id='course-section-'+(groupIndex+1);
@@ -406,12 +418,11 @@ function renderBilingual(page){
    const word=page.words[index];
    const card=document.createElement('div');card.className='word-pair course-word';
    const ru=document.createElement('button');ru.type='button';ru.lang='ru';ru.className='russian-word';ru.textContent=word.display;ru.dataset.speech=word.s;ru.dataset.wordIndex=index;ru.title='左键听音并复制；右键仅复制';
-   const en=document.createElement('span');en.lang='en';en.className='english';en.textContent=word.en;
    const detail=document.createElement('details');detail.className='course-detail';
    const summary=document.createElement('summary');summary.textContent=word.zh;
    const reason=document.createElement('p');reason.textContent=word.reason;
    const tip=document.createElement('p');tip.textContent=word.tip;
-   detail.append(summary,reason,tip);card.append(ru,en,detail);grid.append(card);
+   detail.append(summary,reason,tip);card.append(ru,detail);grid.append(card);
   });
   section.append(title,intro);
   if(group.comparison){
